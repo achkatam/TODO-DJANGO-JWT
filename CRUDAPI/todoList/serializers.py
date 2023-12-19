@@ -13,12 +13,19 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only': True,
                                      'style': {'input_type': 'password'}}}
 
-        def create(self, validated_data):
-            password = validated_data.pop('password')
-            user = User(**validated_data)
-            user.set_password(password)
-            user.save()
-            return {
-                'username': user.username,
-                'email': user.email,
-            }
+    def create(self, validated_data):
+        existing_email = User.objects.filter(
+            email=validated_data.get('email')
+        ).first()
+
+        if existing_email:
+            raise serializers.ValidationError({'email': ['Email address is already in use.']})
+
+        password = validated_data.pop('password')
+        user = User(**validated_data)
+        user.set_password(password)
+        user.save()
+        return {
+            'username': user.username,
+            'email': user.email,
+        }
