@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
+from .models import Todo
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -29,3 +30,9 @@ class UserSerializer(serializers.ModelSerializer):
             'username': user.username,
             'email': user.email,
         }
+
+
+class TodoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Todo
+        fields = '__all__'
